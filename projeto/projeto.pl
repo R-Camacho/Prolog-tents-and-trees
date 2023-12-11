@@ -34,30 +34,57 @@ Predicado auxiliar para calcular o tamanho de um tabuleiro (supondo que será se
 tamanhoTabuleiro(Tab, N) é verdade se 
 */
 
+/*
+Supondo que a utilização do predicado 
+*/
+
+
+
 /*todasCelulas/2
 todasCelulas(Tabuleiro, TodasCelulas) é verdade se TodasCelulas é uma lista orde-
 nada de cima para baixo e da esquerda para a direita, sem elementos repetidos, com todas as
 coordenadas do tabuleiro Tabuleiro;
 */
 
-% Base case: matriz vazia não tem coordenadas
-todasCelulas([], []).
+%approach usando findall/3
 
-% Recursão - chama o for loop exterior
-todasCelulas(Tabuleiro, Coordinates) :-
-    todasCelulasExterior(Tabuleiro, 1, Coordinates). % for loop "exterior"
+todasCelulas(Tabuleiro, TodasCelulas) :-
+    findall((L,C), %gera lista de pares (L,C) com o nome TodasCelulas
+    (nth1(L, Tabuleiro, Linha),nth1(C, Linha , _)), 
+    TodasCelulas).
+    %começamos a contar no 1 (nth1) porque no jogo o ponto superior esquerdo é (1, 1)
 
-% Predicado que vai iterar sobre as linhas 
-todasCelulasExterior([], _, []).
-todasCelulasExterior([Row|RestRows], RowIndex, AllCoordinates) :-
-    todasCelulasInterior(Row, RowIndex, 1, RowCoordinates), % for loop "interior"
-    NextRowIndex is RowIndex + 1,
-    todasCelulasExterior(RestRows, NextRowIndex, RestCoordinates),
-    append(RowCoordinates, RestCoordinates, AllCoordinates).
 
-% Predicado que vai iterar sobre os elementos (colunas) numa linha 
-todasCelulasInterior([], _, _, []).
-todasCelulasInterior([_|RestCols], RowIndex, ColIndex, [(RowIndex, ColIndex)|RestCoordinates]) :-
-    NextColIndex is ColIndex + 1,
-    todasCelulasInterior(RestCols, RowIndex, NextColIndex, RestCoordinates).
+% % Base case: matriz vazia não tem coordenadas
+% todasCelulas([], []).
 
+% % Recursão - chama o for loop exterior
+% todasCelulas(Tabuleiro, Coordinates) :-
+%     todasCelulasExterior(Tabuleiro, 1, Coordinates). % for loop "exterior"
+
+% % Predicado que vai iterar sobre as linhas - for loop exterior
+% todasCelulasExterior([], _, []).
+% todasCelulasExterior([Linha|RestoLinhas], LinhaIndex, AllCoordinates) :-
+%     todasCelulasInterior(Linha, LinhaIndex, 1, LinhaCoordinates), % "chama" o for loop "interior"
+%     NextLinhaIndex is LinhaIndex + 1,
+%     todasCelulasExterior(RestoLinhas, NextLinhaIndex, RestoCoordinates),
+%     append(LinhaCoordinates, RestoCoordinates, AllCoordinates).
+
+% % Predicado que vai iterar sobre os elementos (colunas) numa linha - for loop interior
+% todasCelulasInterior([], _, _, []).
+% todasCelulasInterior([_|RestoCols], LinhaIndex, ColIndex, [(LinhaIndex, ColIndex)|Resto]) :-
+%     NextColIndex is ColIndex + 1,
+%     todasCelulasInterior(RestoCols, LinhaIndex, NextColIndex, RestoCoordinates).
+
+
+
+/*todasCelulas/3
+todasCelulas(Tabuleiro, TodasCelulas, Objecto) é verdade se TodasCelulas é uma
+lista ordenada de cima para baixo e da esquerda para a direita, sem elementos repetidos,
+com todas as coordenadas do tabuleiro Tabuleiro em que existe um objecto do tipo Objecto
+(neste contexto (tal como no anterior) objecto é uma tenda (t), relva (r), árvore (a) ou ainda
+uma variável (por exemplo X), para indicar os espaços não preenchidos).
+*/
+
+%todasCelulas(Tabuleiro, TodasCelulas, Objecto).
+    
