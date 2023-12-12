@@ -1,1 +1,3 @@
 Se tiver a dar problemas no TodasCelulas, verificar sem findall
+
+Mudar nomes na TodasCelulas/3
