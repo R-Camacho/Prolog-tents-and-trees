@@ -86,5 +86,16 @@ com todas as coordenadas do tabuleiro Tabuleiro em que existe um objecto do tipo
 uma variável (por exemplo X), para indicar os espaços não preenchidos).
 */
 
-%todasCelulas(Tabuleiro, TodasCelulas, Objecto).
-    
+
+% Predicate to count occurrences of an object in a list
+count_object(Object, List, Count) :-
+    include(==(Object), List, Filtered),
+    length(Filtered, Count).
+
+% Predicate to generate coordinates for cells with a specific object
+todasCelulas(Tabuleiro, TodasCelulas, Objecto) :-
+    findall((L, C),
+        (nth1(L, Tabuleiro, Linha),
+         nth1(C, Linha, Element),
+         Element == Objecto),
+        TodasCelulas).
