@@ -22,23 +22,11 @@ vizinhancaAlargada((L, C), VizinhancaAlargada) é verdade se VizinhancaAlargada 
 uma lista ordenada de cima para baixo e da esquerda para a direita, sem elementos repetidos,
 com as coordenadas anteriores e ainda as diagonais da coordenada (L, C);
 */
-
 vizinhancaAlargada((L,C), [(N,O), (N,C), (N,E), (L,O), (L,E), (S,O), (S,C), (S,E)]) :- 
     N is L - 1, %norte
     O is C - 1, %oeste
     E is C + 1, %este
     S is L + 1. %sul
-
-/*tamanhoTabuleiro/2
-Predicado auxiliar para calcular o tamanho de um tabuleiro (supondo que será sempre quadrada)
-tamanhoTabuleiro(Tab, N) é verdade se 
-*/
-
-/*
-Supondo que a utilização do predicado 
-*/
-
-
 
 /*todasCelulas/2
 todasCelulas(Tabuleiro, TodasCelulas) é verdade se TodasCelulas é uma lista orde-
@@ -49,32 +37,11 @@ coordenadas do tabuleiro Tabuleiro;
 %approach usando findall/3
 
 todasCelulas(Tabuleiro, TodasCelulas) :-
-    findall((L,C), %gera lista de pares (L,C) com o nome TodasCelulas
+    findall(    %gera lista de pares (L,C) com o nome TodasCelulas
+    (L,C), 
     (nth1(L, Tabuleiro, Linha),nth1(C, Linha , _)), 
     TodasCelulas).
     %começamos a contar no 1 (nth1) porque no jogo o ponto superior esquerdo é (1, 1)
-
-
-% % Base case: matriz vazia não tem coordenadas
-% todasCelulas([], []).
-
-% % Recursão - chama o for loop exterior
-% todasCelulas(Tabuleiro, Coordinates) :-
-%     todasCelulasExterior(Tabuleiro, 1, Coordinates). % for loop "exterior"
-
-% % Predicado que vai iterar sobre as linhas - for loop exterior
-% todasCelulasExterior([], _, []).
-% todasCelulasExterior([Linha|RestoLinhas], LinhaIndex, AllCoordinates) :-
-%     todasCelulasInterior(Linha, LinhaIndex, 1, LinhaCoordinates), % "chama" o for loop "interior"
-%     NextLinhaIndex is LinhaIndex + 1,
-%     todasCelulasExterior(RestoLinhas, NextLinhaIndex, RestoCoordinates),
-%     append(LinhaCoordinates, RestoCoordinates, AllCoordinates).
-
-% % Predicado que vai iterar sobre os elementos (colunas) numa linha - for loop interior
-% todasCelulasInterior([], _, _, []).
-% todasCelulasInterior([_|RestoCols], LinhaIndex, ColIndex, [(LinhaIndex, ColIndex)|Resto]) :-
-%     NextColIndex is ColIndex + 1,
-%     todasCelulasInterior(RestoCols, LinhaIndex, NextColIndex, RestoCoordinates).
 
 
 
@@ -86,16 +53,54 @@ com todas as coordenadas do tabuleiro Tabuleiro em que existe um objecto do tipo
 uma variável (por exemplo X), para indicar os espaços não preenchidos).
 */
 
-
-% Predicate to count occurrences of an object in a list
-count_object(Object, List, Count) :-
-    include(==(Object), List, Filtered),
-    length(Filtered, Count).
-
-% Predicate to generate coordinates for cells with a specific object
-todasCelulas(Tabuleiro, TodasCelulas, Objecto) :-
-    findall((L, C),
+todasCelulas((Tabuleiro, TodasCelulas, Objecto)) :-
+    findall(
+        (L, C),
         (nth1(L, Tabuleiro, Linha),
          nth1(C, Linha, Element),
          Element == Objecto),
         TodasCelulas).
+
+/*contaObjectos/3
+Predicado auxiliar: contaObjectos(O, L, C) é verdade se existem C vezes o objeto O na lista L
+*/
+contaObjectos((Objecto), L, C) :-
+    include((==(Objecto)), L, L2),
+    length(L2, C).
+
+/*contaObjectosLinha/3
+Predicado auxiliar: contaObjectosLinha(O, Tabuleiro, ContaLinhas) é verdade se a 
+lista ContaLinhas é composta pelo número de vezes que o objeto O aparece em cada linha do Tabuleiro
+*/
+contaObjectosLinha(Tabuleiro, Objecto, ContagemLinhas):-
+    maplist(contaObjectos(Objecto), Tabuleiro, ContagemLinhas).
+
+/*contaObjectosColuna/3
+Predicado auxiliar: contaObjectosColuna(O, Tabuleiro, ContaColunas) é verdade se a 
+lista ContaColunas é composta pelo número de vezes que o objeto O aparece em cada coluna do Tabuleiro
+*/
+contaObjectosColuna(Tabuleiro, Objecto, ContagemColunas):-
+    transpose(Tabuleiro, Transposto), % contar as colunas de uma matriz é o mesmo que contar as linhas da sua transposta
+    contaObjectosLinha(Transposto, Objecto, ContagemColunas).
+
+/*calculaObjectosTabuleiro/4
+calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) é verdade se 
+*/
+
+calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) :-
+    contaObjectosLinha(Tabuleiro, Objecto, ContagemLinhas), 
+    contaObjectosColuna(Tabuleiro, Objecto, ContagemColunas).
+
+    
+/*celulaVazia/2
+celulaVazia(Tabuleiro, (L, C)) é verdade se Tabuleiro for um tabuleiro que não tem
+nada ou tem relva nas coordenadas (L, C)
+*/
+celulaVazia(Tabuleiro, (L, C)) :-
+    nth1(L, Tabuleiro, Linha), 
+    nth1(C, Linha, Celula), %mais uma vez começamos a contar no 1
+    (Celula == r ; var(Celula)).
+    
+    
+
+

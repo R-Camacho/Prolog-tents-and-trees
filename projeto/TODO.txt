@@ -1,3 +1,4 @@
 Se tiver a dar problemas no TodasCelulas, verificar sem findall
 
 Mudar nomes na TodasCelulas/3
+E fazer com que mostre as cells sem objetos quando recebe como argumento uma variável
