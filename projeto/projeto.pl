@@ -102,5 +102,7 @@ celulaVazia(Tabuleiro, (L, C)) :-
     (Celula == r ; var(Celula)).
     
     
-
-
+/*insereObjectoCelula/3
+insereObjectoCelula(Tabuleiro, TendaOuRelva, (L, C)) é verdade se Tabuleiro é um
+tabuleiro e (L, C) são as coordenadas onde queremos inserir o objecto TendaOuRelva
+*/
