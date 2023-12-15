@@ -50,7 +50,7 @@ somaDigitos1(N, S) :-
     N >= 10,
     Dig is N mod 10,
     New is N // 10,
-    somaDigitos(New, Y),
+    somaDigitos1(New, Y),
     S is Y + Dig.
     
 %ii. iterativo

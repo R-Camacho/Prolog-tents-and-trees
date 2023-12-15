@@ -15,8 +15,14 @@ p(X,Y) :- q(X),!,r(Y).
 Indique todas as respostas do Prolog ao objetivo p(X,Y).
 (d) Suponha que a primeira cláusula é substituída por
 p(X,Y) :- q(X),r(Y),!.
-Indique todas as respostas do Prolog ao objetivo (p(X,Y).
+Indique todas as respostas do Prolog ao objetivo p(X,Y).
 */
+p(X,Y) :- q(X),r(Y), !.
+p(5,z).
+q(1).
+q(2).
+r(a).
+r(b).
 
 
 %a) X=1, Y=a; X=1, Y=b; X=2, Y=a; X=2, Y=b; X=5, Y=z.
@@ -44,13 +50,13 @@ r(3).
 (e) Introduza um operador de corte para obter apenas as 5 primeiras respostas.
 */
 
-p(2, 3).
-p(X,Y) :- q(X), r(Y).
-q(1).
-q(2) :- !.
-q(3).
-r(1).
-r(3).
+% p(2, 3).
+% p(X,Y) :- q(X), r(Y).
+% q(1).
+% q(2).
+% q(3).
+% r(1).
+% r(3).
 
 %a) 
 /*
