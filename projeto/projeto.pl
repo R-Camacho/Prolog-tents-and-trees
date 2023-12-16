@@ -1,4 +1,5 @@
-%Rodrigo Camacho ist1110462 LEIC-A
+%Rodrigo Manuel Pita Camacho ist1110462 
+%LEIC-A
 :- use_module(library(clpfd)). % para poder usar transpose/2
 :- set_prolog_flag(answer_write_options,[max_depth(0)]). % ver listas completas
 :- ['puzzlesAcampar.pl']. % Ficheiro dado. No Mooshak tera mais puzzles.
@@ -97,12 +98,32 @@ celulaVazia(Tabuleiro, (L, C)) é verdade se Tabuleiro for um tabuleiro que não
 nada ou tem relva nas coordenadas (L, C)
 */
 celulaVazia(Tabuleiro, (L, C)) :-
-    nth1(L, Tabuleiro, Linha), 
-    nth1(C, Linha, Celula), %mais uma vez começamos a contar no 1
-    (Celula == r ; var(Celula)).
+    nth1(L, Tabuleiro, Linha), %mais uma vez comecamos a contar no 1
+    nth1(C, Linha, Celula),% Aceder a linha L e depois coluna C
+    member(Celula, [r|_]).
+     %ve se Celula e relva (r) ou esta vazia (neste caso uma variavel)
     
     
 /*insereObjectoCelula/3
 insereObjectoCelula(Tabuleiro, TendaOuRelva, (L, C)) é verdade se Tabuleiro é um
 tabuleiro e (L, C) são as coordenadas onde queremos inserir o objecto TendaOuRelva
 */
+
+
+insereObjectoCelula(Tabuleiro, TendaOuRelva, (L, C)):-
+    nth1(L, Tabuleiro, Linha),
+    nth1(C, Linha, Celula),
+    ((nonvar(Celula)); nth1(C, Linha, TendaOuRelva, _)), !. 
+    %se a celula estiver ocupada (for uma constante), T unifica consigo proprio 
+    %caso contrario é colocada a TendaOuRelva no Tabuleiro
+    
+
+
+/*
+insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2)) é ver-
+dade se Tabuleiro é um tabuleiro, e (L, C1) e (L, C2) são as coordenadas, na Linha L,
+entre as quais (incluindo) se insere o objecto TendaOuRelva.
+*/
+insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2)).
+
+%Ideia: identificar coluna ou linha a modificar e usar predicado anterior
