@@ -40,9 +40,9 @@ coordenadas do tabuleiro Tabuleiro;
 todasCelulas(Tabuleiro, TodasCelulas) :- 
     todasCelulasAux(Tabuleiro, TodasCelulas, 1), !.
 
-todasCelulasAux(Tabuleiro, TodasCelulas, N):-
+todasCelulasAux(Tabuleiro, [], Prox_linha):-
     length(Tabuleiro, N), % N - numero de linhas
-    TodasCelulas = [].
+    Prox_linha is N + 1.
 
 
 todasCelulasAux(Tabuleiro, TodasCelulas, Num_linha) :-
@@ -80,7 +80,7 @@ com todas as coordenadas do tabuleiro Tabuleiro em que existe um objecto do tipo
 (neste contexto (tal como no anterior) objecto é uma tenda (t), relva (r), arvore (a) ou ainda
 uma variavel (por exemplo X), para indicar os espacos nao preenchidos).
 */
-
+/*
 todasCelulas((Tabuleiro, TodasCelulas, Objecto)) :-
     findall(
         (L, C),
@@ -88,6 +88,53 @@ todasCelulas((Tabuleiro, TodasCelulas, Objecto)) :-
          nth1(C, Linha, Element),
          Element == Objecto),
         TodasCelulas).
+*/
+
+% todasCelulas(Tabuleiro, TodasCelulas, Objecto) :- 
+%     nonvar(Objecto), !, %salta para o caso especial 
+%     todasCelulasAux(Tabuleiro, TodasCelulas, Objecto, 1).
+
+todasCelulas(Tabuleiro, TodasCelulas, Objecto) :-
+    (var(Objecto) -> 
+    %caso especial: o ultimo argumento dado (Objeto) e um variavel
+    %queremos as celulas vazias
+        todasCelulasVazias(Tabuleiro, TodasCelulas, 1), !
+        ;
+        todasCelulasAux(Tabuleiro, TodasCelulas, Objecto, 1), !
+    ).
+
+
+%caso especial: o ultimo argumento dado (Objeto) e um variavel
+%queremos as celulas vazias
+% todasCelulas(Tabuleiro, TodasCelulas, Objecto) :- 
+%     todasCelulasVazias(Tabuleiro, TodasCelulas, 1), !.
+
+        
+todasCelulasAux(Tabuleiro, [], _, Prox_linha):- 
+    length(Tabuleiro, N),  % N - numero de linhas
+    Prox_linha is N + 1.   
+        
+todasCelulasAux(Tabuleiro, TodasCelulas, Objecto, Num_linha) :-
+    nth1(Num_linha, Tabuleiro, Linha_atual), 
+    bagof((Num_linha, C), (nth1(C, Linha_atual, Objecto)), Coords_linha),
+    Prox_linha is Num_linha + 1,
+    todasCelulasAux(Tabuleiro, New, Objecto, Prox_linha),
+    append(Coords_linha, New, TodasCelulas).
+
+
+todasCelulasVazias(Tabuleiro, [], Prox_linha) :-
+    length(Tabuleiro, N),
+    Prox_linha is N + 1.
+
+todasCelulasVazias(Tabuleiro, TodasCelulas, Num_linha) :-
+    nth1(Num_linha, Tabuleiro, Linha_atual), 
+    findall((Num_linha, C), (nth1(C, Linha_atual, Objecto), var(Objecto)), Coords_linha),
+    Prox_linha is Num_linha + 1,
+    todasCelulasVazias(Tabuleiro, New, Prox_linha),
+    append(Coords_linha, New, TodasCelulas).
+
+
+
 
 /*contaObjectos/3
 Predicado auxiliar: contaObjectos(O, L, C) é verdade se existem C vezes o objeto O na lista L
