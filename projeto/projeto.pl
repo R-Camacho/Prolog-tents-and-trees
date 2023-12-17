@@ -7,7 +7,7 @@
 /*vizinhanca/2 
 vizinhanca((L, C), Vizinhanca) e verdade se Vizinhanca e uma lista ordenada de cima
 para baixo e da esquerda para a direita, sem elementos repetidos, com as coordenadas das
-posições imediatamente acima, imediatamente à esquerda, imediatamente a direita e 
+posicoes imediatamente acima, imediatamente a esquerda, imediatamente a direita e 
 imediatamente abaixo da coordenada (L, C);
 */
 
@@ -30,8 +30,8 @@ vizinhancaAlargada((L,C), [(N,O), (N,C), (N,E), (L,O), (L,E), (S,O), (S,C), (S,E
     S is L + 1. %sul
 
 /*todasCelulas/2
-todasCelulas(Tabuleiro, TodasCelulas) é verdade se TodasCelulas é uma lista orde-
-nada de cima para baixo e da esquerda para a direita, sem elementos repetidos, com todas as
+todasCelulas(Tabuleiro, TodasCelulas) e verdade se TodasCelulas e uma lista ordenada
+de cima para baixo e da esquerda para a direita, sem elementos repetidos, com todas as
 coordenadas do tabuleiro Tabuleiro;
 */
 
@@ -44,7 +44,6 @@ todasCelulasAux(Tabuleiro, [], Prox_linha):-
     length(Tabuleiro, N), % N - numero de linhas
     Prox_linha is N + 1.
 
-
 todasCelulasAux(Tabuleiro, TodasCelulas, Num_linha) :-
     nth1(Num_linha, Tabuleiro, Linha_atual),
     findall((Num_linha, C), nth1(C, Linha_atual, _), Coords_linha),
@@ -53,46 +52,12 @@ todasCelulasAux(Tabuleiro, TodasCelulas, Num_linha) :-
     append(Coords_linha, New, TodasCelulas).
 
 
-
-
-todasCelulas1(Tabuleiro, TodasCelulas) :-     
-    nth1(L, Tabuleiro, Linha),
-    %começamos a contar no 1 (nth1) porque no jogo o ponto superior esquerdo e (1, 1)
-    findall((L,C),nth1(C, Linha , _),TodasCelulas).
-
-
-/*Tava assim
-    findall(    %gera lista de pares (L,C) com o nome TodasCelulas
-    (L,C), 
-    (nth1(L, Tabuleiro, Linha),nth1(C, Linha , _)), 
-    TodasCelulas).
-    %começamos a contar no 1 (nth1) porque no jogo o ponto superior esquerdo é (1, 1)
-
-
-*/
-
-
-
 /*todasCelulas/3
 todasCelulas(Tabuleiro, TodasCelulas, Objecto) e verdade se TodasCelulas e uma
 lista ordenada de cima para baixo e da esquerda para a direita, sem elementos repetidos,
 com todas as coordenadas do tabuleiro Tabuleiro em que existe um objecto do tipo Objecto
-(neste contexto (tal como no anterior) objecto é uma tenda (t), relva (r), arvore (a) ou ainda
-uma variavel (por exemplo X), para indicar os espacos nao preenchidos).
+constantes t, r, a ou uma variavel (para indicar os espacos nao preenchidos).
 */
-/*
-todasCelulas((Tabuleiro, TodasCelulas, Objecto)) :-
-    findall(
-        (L, C),
-        (nth1(L, Tabuleiro, Linha),
-         nth1(C, Linha, Element),
-         Element == Objecto),
-        TodasCelulas).
-*/
-
-% todasCelulas(Tabuleiro, TodasCelulas, Objecto) :- 
-%     nonvar(Objecto), !, %salta para o caso especial 
-%     todasCelulasAux(Tabuleiro, TodasCelulas, Objecto, 1).
 
 todasCelulas(Tabuleiro, TodasCelulas, Objecto) :-
     (var(Objecto) -> 
@@ -103,13 +68,8 @@ todasCelulas(Tabuleiro, TodasCelulas, Objecto) :-
         todasCelulasAux(Tabuleiro, TodasCelulas, Objecto, 1), !
     ).
 
+%semelhante ao predicado anterior, o approach e iterativo usando bagof/3 findall/3 
 
-%caso especial: o ultimo argumento dado (Objeto) e um variavel
-%queremos as celulas vazias
-% todasCelulas(Tabuleiro, TodasCelulas, Objecto) :- 
-%     todasCelulasVazias(Tabuleiro, TodasCelulas, 1), !.
-
-        
 todasCelulasAux(Tabuleiro, [], _, Prox_linha):- 
     length(Tabuleiro, N),  % N - numero de linhas
     Prox_linha is N + 1.   
@@ -135,25 +95,22 @@ todasCelulasVazias(Tabuleiro, TodasCelulas, Num_linha) :-
 
 
 
-
 /*contaObjectos/3
-Predicado auxiliar: contaObjectos(O, L, C) é verdade se existem C vezes o objeto O na lista L
+Predicado auxiliar: contaObjectos(O, L, C) e verdade se existem C vezes o objeto O na lista L
 */
 
 %Caso o Objecto seja uma variavel
-
 contaObjectos(Objecto, L, Conta) :- 
-    var(Objecto), !,  
-    setof(Objecto, member(Objecto, L), L2),
-    length(L2, Conta), !.
+    var(Objecto), !,
+    exclude(nonvar, L, Variaveis), %retira as constantes da lista  
+    length(Variaveis, Conta), !.
 
 %Caso o Objecto seja uma constante
-
 contaObjectos(Objecto, L, Conta) :-  
-
     exclude(var, L, Constantes), %retira as variaveis da lista
     findall(Objecto, member(Objecto, Constantes), L2),
     length(L2, Conta), !.
+
 
 /*contaObjectosLinha/3
 Predicado auxiliar: contaObjectosLinha(O, Tabuleiro, ContaLinhas) e verdade se a 
@@ -164,17 +121,17 @@ contaObjectosLinha(Tabuleiro, Objecto, ContagemLinhas):-
     maplist(contaObjectos(Objecto), Tabuleiro, ContagemLinhas).
 
 /*contaObjectosColuna/3
-Predicado auxiliar: contaObjectosColuna(O, Tabuleiro, ContaColunas) é verdade se a 
-lista ContaColunas é composta pelo número de vezes que o objeto O aparece em cada coluna do Tabuleiro
+Predicado auxiliar: contaObjectosColuna(O, Tabuleiro, ContaColunas) e verdade se a 
+lista ContaColunas e composta pelo numero de vezes que o objeto O aparece em cada coluna do Tabuleiro
 */
 contaObjectosColuna(Tabuleiro, Objecto, ContagemColunas):-
-    transpose(Tabuleiro, Transposto), % contar as colunas de uma matriz é o mesmo que contar as linhas da sua transposta
+    transpose(Tabuleiro, Transposto), % contar as colunas de uma matriz e o mesmo que contar as linhas da sua transposta
     contaObjectosLinha(Transposto, Objecto, ContagemColunas).
 
-/*calculaObjectosTabuleiro/4
-calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) é verdade se 
-*/
 
+/*calculaObjectosTabuleiro/4
+calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) e verdade se 
+*/
 
 calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) :-
     contaObjectosLinha(Tabuleiro, Objecto, ContagemLinhas), 
@@ -186,10 +143,14 @@ calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) :-
 celulaVazia(Tabuleiro, (L, C)) e verdade se Tabuleiro for um tabuleiro que nao tem
 nada ou tem relva nas coordenadas (L, C)
 */
-celulaVazia(Tabuleiro, (L, C)) :-
+celulaVazia(Tabuleiro, (L, C)) :-  
+    %caso as coordenadas sejam fora do tabuleiro
+    length(Tabuleiro, N),
+    ((L < 1; L > N ; C < 1; C > N), ! ;
+    %----------------------------------
     nth1(L, Tabuleiro, Linha), %mais uma vez comecamos a contar no 1
     nth1(C, Linha, Celula),% Aceder a linha L e depois coluna C
-    member(Celula, [r|_]).
+    (var(Celula), !; Celula == r)).
     %ve se Celula e relva (r) ou esta vazia (neste caso uma variavel)
     
     
@@ -206,10 +167,8 @@ insereObjectoCelula(Tabuleiro, TendaOuRelva, (L, C)):-
     %se a celula estiver ocupada (for uma constante), T unifica consigo proprio 
     %caso contrario e colocada a TendaOuRelva no Tabuleiro
     
-
-
-/*
-insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2)) é ver-
+/*insereObjectoEntrePosicoes/4
+insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2)) e ver-
 dade se Tabuleiro e um tabuleiro, e (L, C1) e (L, C2) sao as coordenadas, na Linha L,
 entre as quais (incluindo) se insere o objecto TendaOuRelva.
 */
@@ -224,6 +183,3 @@ insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), Contador):
     insereObjectoCelula(Tabuleiro, TendaOuRelva, (L, Atual_C)),
     Prox_C is Contador + 1,
     insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), Prox_C).
-
-
-
