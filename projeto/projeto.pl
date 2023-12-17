@@ -48,7 +48,6 @@ todasCelulasAux(Tabuleiro, TodasCelulas, N):-
 todasCelulasAux(Tabuleiro, TodasCelulas, Num_linha) :-
     nth1(Num_linha, Tabuleiro, Linha_atual),
     findall((Num_linha, C), nth1(C, Linha_atual, _), Coords_linha),
-    %append(TodasCelulas, Coords_linha, New),
     Prox_linha is Num_linha + 1,
     todasCelulasAux(Tabuleiro, New, Prox_linha),
     append(Coords_linha, New, TodasCelulas).
