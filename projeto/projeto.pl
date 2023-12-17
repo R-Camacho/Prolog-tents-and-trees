@@ -182,3 +182,17 @@ insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), Contador):
     insereObjectoCelula(Tabuleiro, TendaOuRelva, (L, Atual_C)),
     Prox_C is Contador + 1,
     insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), Prox_C).
+
+
+
+/*relva/1
+relva(Puzzle) é verdade se Puzzle e um puzzle que, após a aplicação do predicado, tem
+relva em todas as linhas/colunas cujo número de tendas já atingiu o número de tendas possível
+nessas linhas/colunas;
+*/
+
+relva(Puzzle) :-
+    relva(Puzzle, 1).
+
+relva(Puzzle, Linha_atual):-
+    puzzle(_,Tabuleiro, TendaLinhas, TendaColunas).
