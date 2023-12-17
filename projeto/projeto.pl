@@ -5,10 +5,10 @@
 :- ['puzzlesAcampar.pl']. % Ficheiro dado. No Mooshak tera mais puzzles.
 
 /*vizinhanca/2 
-vizinhanca((L, C), Vizinhanca) é verdade se Vizinhanca é uma lista ordenada de cima
+vizinhanca((L, C), Vizinhanca) e verdade se Vizinhanca e uma lista ordenada de cima
 para baixo e da esquerda para a direita, sem elementos repetidos, com as coordenadas das
-posições imediatamente acima, imediatamente à esquerda, imediatamente à direita e imedia-
-tamente abaixo da coordenada (L, C);
+posições imediatamente acima, imediatamente à esquerda, imediatamente a direita e 
+imediatamente abaixo da coordenada (L, C);
 */
 
 vizinhanca((L,C), [(N,C), (L,O), (L,E), (S,C)]) :-
@@ -19,7 +19,7 @@ vizinhanca((L,C), [(N,C), (L,O), (L,E), (S,C)]) :-
 
 
 /*vizinhancaAlargada/2
-vizinhancaAlargada((L, C), VizinhancaAlargada) é verdade se VizinhancaAlargada é
+vizinhancaAlargada((L, C), VizinhancaAlargada) e verdade se VizinhancaAlargada e
 uma lista ordenada de cima para baixo e da esquerda para a direita, sem elementos repetidos,
 com as coordenadas anteriores e ainda as diagonais da coordenada (L, C);
 */
@@ -35,9 +35,31 @@ nada de cima para baixo e da esquerda para a direita, sem elementos repetidos, c
 coordenadas do tabuleiro Tabuleiro;
 */
 
-%approach usando findall/3
+%approach iterativa usando findall/3
 
-todasCelulas(Tabuleiro, TodasCelulas) :-
+todasCelulas(Tabuleiro, TodasCelulas) :- 
+    todasCelulasAux(Tabuleiro, TodasCelulas, 1, Celulas).
+
+todasCelulasAux(Tabuleiro, TodasCelulas, N, TodasCelulas):-
+    length(Tabuleiro, N). % N - numero de linhas
+    nth1(Index, List, Elem).
+    
+
+todasCelulasAux(Tabuleiro, TodasCelulas, Num_linha, Celulas) :-     
+    nth1(Num_linha, Tabuleiro, Linha),
+    %começamos a contar no 1 (nth1) porque no jogo o ponto superior esquerdo e (1, 1)
+    findall((Num_linha,C),nth1(C, Linha , _),TodasCelulas),  %gera lista de pares (L,C) com o nome TodasCelulas
+    append(Celulas, TodasCelulas),
+    Prox_linha is Num_linha + 1,
+    todasCelulasAux(Tabuleiro, TodasCelulas, Prox_linha, Celulas).
+
+todasCelulas1(Tabuleiro, TodasCelulas) :-     
+    nth1(L, Tabuleiro, Linha),
+    %começamos a contar no 1 (nth1) porque no jogo o ponto superior esquerdo e (1, 1)
+    findall((L,C),nth1(C, Linha , _),TodasCelulas).
+
+
+/*Tava assim
     findall(    %gera lista de pares (L,C) com o nome TodasCelulas
     (L,C), 
     (nth1(L, Tabuleiro, Linha),nth1(C, Linha , _)), 
@@ -45,12 +67,16 @@ todasCelulas(Tabuleiro, TodasCelulas) :-
     %começamos a contar no 1 (nth1) porque no jogo o ponto superior esquerdo é (1, 1)
 
 
+*/
+
+
+
 /*todasCelulas/3
-todasCelulas(Tabuleiro, TodasCelulas, Objecto) é verdade se TodasCelulas é uma
+todasCelulas(Tabuleiro, TodasCelulas, Objecto) e verdade se TodasCelulas e uma
 lista ordenada de cima para baixo e da esquerda para a direita, sem elementos repetidos,
 com todas as coordenadas do tabuleiro Tabuleiro em que existe um objecto do tipo Objecto
-(neste contexto (tal como no anterior) objecto é uma tenda (t), relva (r), árvore (a) ou ainda
-uma variável (por exemplo X), para indicar os espaços não preenchidos).
+(neste contexto (tal como no anterior) objecto é uma tenda (t), relva (r), arvore (a) ou ainda
+uma variavel (por exemplo X), para indicar os espacos nao preenchidos).
 */
 
 todasCelulas((Tabuleiro, TodasCelulas, Objecto)) :-
@@ -72,21 +98,19 @@ contaObjectos(Objecto, L, Conta) :-
     setof(Objecto, member(Objecto, L), L2),
     length(L2, Conta), !.
 
-
 %Caso o Objecto seja uma constante
+
 contaObjectos(Objecto, L, Conta) :-  
 
     exclude(var, L, Constantes), %retira as variaveis da lista
     findall(Objecto, member(Objecto, Constantes), L2),
     length(L2, Conta), !.
 
-
-
-
 /*contaObjectosLinha/3
-Predicado auxiliar: contaObjectosLinha(O, Tabuleiro, ContaLinhas) é verdade se a 
-lista ContaLinhas é composta pelo número de vezes que o objeto O aparece em cada linha do Tabuleiro
+Predicado auxiliar: contaObjectosLinha(O, Tabuleiro, ContaLinhas) e verdade se a 
+lista ContaLinhas e composta pelo numero de vezes que o objeto O aparece em cada linha do Tabuleiro
 */
+
 contaObjectosLinha(Tabuleiro, Objecto, ContagemLinhas):-
     maplist(contaObjectos(Objecto), Tabuleiro, ContagemLinhas).
 
@@ -101,12 +125,6 @@ contaObjectosColuna(Tabuleiro, Objecto, ContagemColunas):-
 /*calculaObjectosTabuleiro/4
 calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) é verdade se 
 */
-
-
-%caso especial - o objeto e uma variavel
-%calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) :-
-
-
 
 
 calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) :-
