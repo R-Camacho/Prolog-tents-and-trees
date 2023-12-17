@@ -42,7 +42,7 @@ todasCelulas(Tabuleiro, TodasCelulas) :-
 
 todasCelulasAux(Tabuleiro, [], Prox_linha):-
     length(Tabuleiro, N), % N - numero de linhas
-    Prox_linha is N + 1.
+    Prox_linha is N + 1, !.
 
 todasCelulasAux(Tabuleiro, TodasCelulas, Num_linha) :-
     nth1(Num_linha, Tabuleiro, Linha_atual),
@@ -68,15 +68,15 @@ todasCelulas(Tabuleiro, TodasCelulas, Objecto) :-
         todasCelulasAux(Tabuleiro, TodasCelulas, Objecto, 1), !
     ).
 
-%semelhante ao predicado anterior, o approach e iterativo usando bagof/3 findall/3 
+%semelhante ao predicado anterior, com approach iterativo usando bagof/3 findall/3 
 
 todasCelulasAux(Tabuleiro, [], _, Prox_linha):- 
     length(Tabuleiro, N),  % N - numero de linhas
-    Prox_linha is N + 1.   
+    Prox_linha is N + 1, !.   
         
 todasCelulasAux(Tabuleiro, TodasCelulas, Objecto, Num_linha) :-
     nth1(Num_linha, Tabuleiro, Linha_atual), 
-    bagof((Num_linha, C), (nth1(C, Linha_atual, Objecto)), Coords_linha),
+    findall((Num_linha, C), (nth1(C, Linha_atual, Celula), Celula == Objecto), Coords_linha),
     Prox_linha is Num_linha + 1,
     todasCelulasAux(Tabuleiro, New, Objecto, Prox_linha),
     append(Coords_linha, New, TodasCelulas).
@@ -84,7 +84,7 @@ todasCelulasAux(Tabuleiro, TodasCelulas, Objecto, Num_linha) :-
 
 todasCelulasVazias(Tabuleiro, [], Prox_linha) :-
     length(Tabuleiro, N),
-    Prox_linha is N + 1.
+    Prox_linha is N + 1, !.
 
 todasCelulasVazias(Tabuleiro, TodasCelulas, Num_linha) :-
     nth1(Num_linha, Tabuleiro, Linha_atual), 
@@ -92,7 +92,6 @@ todasCelulasVazias(Tabuleiro, TodasCelulas, Num_linha) :-
     Prox_linha is Num_linha + 1,
     todasCelulasVazias(Tabuleiro, New, Prox_linha),
     append(Coords_linha, New, TodasCelulas).
-
 
 
 /*contaObjectos/3
