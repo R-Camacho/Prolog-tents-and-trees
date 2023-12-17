@@ -7,3 +7,6 @@ Estou a assumir que no insereObjectoCelula, a celula está vazia
 
 
 Retirar acentos de comments
+
+
+calculaObjectosTabuleiro não dá para variaveis
