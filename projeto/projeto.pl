@@ -35,23 +35,26 @@ nada de cima para baixo e da esquerda para a direita, sem elementos repetidos, c
 coordenadas do tabuleiro Tabuleiro;
 */
 
-%approach iterativa usando findall/3
+%approach iterativo usando findall/3
 
 todasCelulas(Tabuleiro, TodasCelulas) :- 
-    todasCelulasAux(Tabuleiro, TodasCelulas, 1, Celulas).
+    todasCelulasAux(Tabuleiro, TodasCelulas, 1), !.
 
-todasCelulasAux(Tabuleiro, TodasCelulas, N, TodasCelulas):-
-    length(Tabuleiro, N). % N - numero de linhas
-    nth1(Index, List, Elem).
-    
+todasCelulasAux(Tabuleiro, TodasCelulas, N):-
+    length(Tabuleiro, N), % N - numero de linhas
+    TodasCelulas = [].
 
-todasCelulasAux(Tabuleiro, TodasCelulas, Num_linha, Celulas) :-     
-    nth1(Num_linha, Tabuleiro, Linha),
-    %começamos a contar no 1 (nth1) porque no jogo o ponto superior esquerdo e (1, 1)
-    findall((Num_linha,C),nth1(C, Linha , _),TodasCelulas),  %gera lista de pares (L,C) com o nome TodasCelulas
-    append(Celulas, TodasCelulas),
+
+todasCelulasAux(Tabuleiro, TodasCelulas, Num_linha) :-
+    nth1(Num_linha, Tabuleiro, Linha_atual),
+    findall((Num_linha, C), nth1(C, Linha_atual, _), Coords_linha),
+    %append(TodasCelulas, Coords_linha, New),
     Prox_linha is Num_linha + 1,
-    todasCelulasAux(Tabuleiro, TodasCelulas, Prox_linha, Celulas).
+    todasCelulasAux(Tabuleiro, New, Prox_linha),
+    append(Coords_linha, New, TodasCelulas).
+
+
+
 
 todasCelulas1(Tabuleiro, TodasCelulas) :-     
     nth1(L, Tabuleiro, Linha),
