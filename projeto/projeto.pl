@@ -129,7 +129,9 @@ contaObjectosColuna(Tabuleiro, Objecto, ContagemColunas):-
 
 
 /*calculaObjectosTabuleiro/4
-calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) e verdade se 
+calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) e verdade se Tabuleiro for um tabuleiro, 
+Objecto for o tipo de objecto que se procura, e ContagemLinhas e ContagemColunas forem, 
+respectivamente, listas com o número desses objectos por linha e por coluna.
 */
 
 calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) :-
@@ -165,25 +167,24 @@ insereObjectoCelula(Tabuleiro, TendaOuRelva, (L, C)):-
     ((nonvar(Celula)); nth1(C, Linha, TendaOuRelva)), !. 
     %se a celula estiver ocupada (for uma constante), T unifica consigo proprio 
     %caso contrario e colocada a TendaOuRelva no Tabuleiro
-    
+
+
 /*insereObjectoEntrePosicoes/4
 insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2)) e ver-
 dade se Tabuleiro e um tabuleiro, e (L, C1) e (L, C2) sao as coordenadas, na Linha L,
 entre as quais (incluindo) se insere o objecto TendaOuRelva.
 */
 insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2)):-
-    insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), C1), !.
+    insereObjectoEntrePosicoesAux(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), C1), !.
 
-insereObjectoEntrePosicoes(_, _, (L, _), (L, C2), Prox_C2):-
+insereObjectoEntrePosicoesAux(_, _, (L, _), (L, C2), Prox_C2):-
     Prox_C2 is C2 + 1. %Para quando a ultima coluna for ultrapassada
 
-insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), Contador):-
+insereObjectoEntrePosicoesAux(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), Contador):-
     Atual_C is Contador,
     insereObjectoCelula(Tabuleiro, TendaOuRelva, (L, Atual_C)),
     Prox_C is Contador + 1,
-    insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), Prox_C).
-
-
+    insereObjectoEntrePosicoesAux(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), Prox_C).
 
 /*relva/1
 relva(Puzzle) é verdade se Puzzle e um puzzle que, após a aplicação do predicado, tem
@@ -191,8 +192,41 @@ relva em todas as linhas/colunas cujo número de tendas já atingiu o número de
 nessas linhas/colunas;
 */
 
-relva(Puzzle) :-
-    relva(Puzzle, 1).
 
-relva(Puzzle, Linha_atual):-
-    puzzle(_,Tabuleiro, TendaLinhas, TendaColunas).
+
+relva(Puzzle) :-
+    Puzzle = (Tabuleiro, Lista_tendas_linhas, Lista_tendas_colunas),
+    contaObjectosLinha(Tabuleiro, t, Tendas_Colocadas),
+    relva(Tabuleiro,Puzzle, Tendas_Colocadas, Lista_tendas_linhas,  1),
+    transpose(Tabuleiro, Transposto),
+    contaObjectosLinha(Transposto, t, Tendas_ColocadasColunas),
+    relva(Transposto, Puzzle, Tendas_ColocadasColunas, Lista_tendas_colunas, 1), !.
+
+%caso terminal da iteracao
+relva(Tabuleiro, _, _, _, N_Linha) :-
+    length(Tabuleiro, N), % N - numero de linhas
+    N_Linha is N + 1, !.
+
+relva(Tabuleiro, Puzzle, Tendas_Colocadas, Lista_tendas, N_Linha):-
+    (%se a linha estiver completa
+    
+    nth1(N_Linha, Tendas_Colocadas, Tendas_nesta_linha), %descobrir o numero de tendas existentes por linha
+
+    nth1(N_Linha, Lista_tendas, N_Tendas_a_colocar), %comparar com o numero de tendas necessario por linha
+    Tendas_nesta_linha == N_Tendas_a_colocar,
+
+    %se estiver completa, coloca relva nas celulas vazias (toda a linha)
+    length(Tabuleiro, N),
+    insereObjectoEntrePosicoes(Tabuleiro, r, (N_Linha, 1), (N_Linha, N)),
+
+    %avanca para a prox iteracao
+    Prox_linha is N_Linha + 1,
+    relva(Tabuleiro, Puzzle, Tendas_Colocadas, Lista_tendas, Prox_linha), !
+    )
+
+    ; %caso contrario apenas avanca para a prox iteracao
+    
+    Prox_linha is N_Linha + 1,
+    relva(Tabuleiro, Puzzle, Tendas_Colocadas, Lista_tendas, Prox_linha).
+
+
