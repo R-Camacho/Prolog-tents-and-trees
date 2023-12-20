@@ -132,6 +132,138 @@ test(insereObjectoEntrePosicoes_1) :-
 
 :- end_tests(insereObjectoEntrePosicoes).
 
+% Helper predicate to count the number of variables in a nested list
+count_vars(List, Count) :-
+    flatten(List, FlatList),
+    include(var, FlatList, Vars),
+    length(Vars, Count).
+
+% Test for vizinhanca/2
+:- begin_tests(vizinhanca).
+test(vizinhanca_1) :-
+    vizinhanca((3, 4), L),
+    assertion(maplist(nonvar, L)),
+    assertion(L == [(2,4),(3,3),(3,5),(4,4)]).
+
+test(vizinhanca_2) :-
+    vizinhanca((3, 1), L),
+    assertion(maplist(nonvar, L)),
+    assertion(L == [(2,1),(3,0),(3,2),(4,1)]).
+
+:- end_tests(vizinhanca).
+
+% Test for vizinhancaAlargada/2
+:- begin_tests(vizinhancaAlargada).
+test(vizinhancaAlargada_1) :-
+    vizinhancaAlargada((3, 4), L),
+    assertion(maplist(nonvar, L)),
+    assertion(L == [(2,3),(2,4),(2,5),(3,3),(3,5),(4,3),(4,4),(4,5)]).
+
+:- end_tests(vizinhancaAlargada).
+
+% Test for todasCelulas/2
+:- begin_tests(todasCelulas).
+test(todasCelulas_1) :-
+    puzzle(6-13, (T, _, _)),
+    todasCelulas(T, TodasCelulas),
+    assertion(maplist(nonvar, TodasCelulas)),
+    assertion(TodasCelulas == [(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),
+                    (2,1),(2,2),(2,3),(2,4),(2,5),(2,6),
+                    (3,1),(3,2),(3,3),(3,4),(3,5),(3,6),
+                    (4,1),(4,2),(4,3),(4,4),(4,5),(4,6),
+                    (5,1),(5,2),(5,3),(5,4),(5,5),(5,6),
+                    (6,1),(6,2),(6,3),(6,4),(6,5),(6,6)]).
+
+:- end_tests(todasCelulas).
+
+% Test for todasCelulas/3
+:- begin_tests(todasCelulas_with_object).
+test(todasCelulas_with_object_1) :-
+    puzzle(6-13, (T, _, _)),
+    todasCelulas(T, TodasCelulas, a),
+    assertion(maplist(nonvar, TodasCelulas)),
+    assertion(TodasCelulas == [(1,5),(2,1),(2,6),(3,4),(4,5),(5,3),(6,3)]).
+
+:- end_tests(todasCelulas_with_object).
+
+% Test for calculaObjectosTabuleiro/4
+:- begin_tests(calculaObjectosTabuleiro).
+test(calculaObjectosTabuleiro_1) :-
+    puzzle(6-13, (T, _, _)),
+    calculaObjectosTabuleiro(T, CLinhas, CColunas, a),
+    assertion(maplist(nonvar, CLinhas)),
+    assertion(maplist(nonvar, CColunas)),
+    assertion(CLinhas == [1,2,1,1,1,1]),
+    assertion(CColunas == [1,0,2,1,2,1]).
+
+test(calculaObjectosTabuleiro_2) :-
+    puzzle(6-13, (T, _, _)),
+    calculaObjectosTabuleiro(T, CLinhas, CColunas, _),
+    assertion(maplist(nonvar, CLinhas)),
+    assertion(maplist(nonvar, CColunas)),
+    assertion(CLinhas == [5,4,5,5,5,5]),
+    assertion(CColunas == [5,6,4,5,4,5]).
+
+:- end_tests(calculaObjectosTabuleiro).
+
+% Test for celulaVazia/2
+:- begin_tests(celulaVazia).
+test(celulaVazia_1) :-
+    puzzle(6-13, (T, _, _)),
+    assertion(celulaVazia(T, (1, 2))).
+
+test(celulaVazia_2) :-
+    puzzle(6-13, (T, _, _)),
+    assertion(\+ celulaVazia(T, (1, 5))). % Negate the function call to ensure the test fails.
+
+test(celulaVazia_3) :-
+    puzzle(6-13, (T, _, _)),
+    assertion(celulaVazia(T, (0, 5))).
+
+test(celulaVazia_4) :-
+    puzzle(6-13, (T, _, _)),
+    assertion(celulaVazia(T, (1, 7))).
+
+:- end_tests(celulaVazia).
+
+% Test for insereObjectoCelula/3
+:- begin_tests(insereObjectoCelula).
+test(insereObjectoCelula_1) :-
+    T = [[_, _, a, _], [_, _, _, _], [a, a, a, a], [_, _, a, _]],
+    insereObjectoCelula(T, r, (1,1)),
+    count_vars(T, CountAfter),
+    Expected = [[r, X, a, Y], [Z, W, V, U], [a, a, a, a], [S, R, a, Q]],
+    count_vars(Expected, ExpectedCount),
+    assertion(T = Expected),
+    assertion(maplist(var, [X, Y, Z, W, V, U, S, R, Q])),
+    assertion(CountAfter =:= ExpectedCount).
+
+test(insereObjectoCelula_2) :-
+    T = [[_, _, a, _], [_, _, _, _], [a, a, a, a], [_, _, a, _]],
+    insereObjectoCelula(T, r, (1,3)),
+    Expected = [[X, Y, a, Z], [W, V, U, S], [a, a, a, a], [R, J, a, O]],
+    count_vars(Expected, ExpectedCount),
+    count_vars(T, CountAfter),
+    assertion(T = Expected),
+    assertion(maplist(var, [X, Y, Z, W, V, U, S, R, J, O])),
+    assertion(CountAfter =:= ExpectedCount).
+
+:- end_tests(insereObjectoCelula).
+
+% Test for insereObjectoEntrePosicoes/4
+:- begin_tests(insereObjectoEntrePosicoes).
+test(insereObjectoEntrePosicoes_1) :-
+    T = [[_, _, a, _], [_, _, _, _], [a, a, a, a], [_, _, a, _]],
+    insereObjectoEntrePosicoes(T, r, (1,1), (1,4)),
+    count_vars(T, CountAfter),
+    Expected = [[r, r, a, r], [X, Y, Z, W], [a, a, a, a], [V, U, a, S]],
+    count_vars(Expected, ExpectedCount),
+    assertion(T = Expected),
+    assertion(maplist(var, [X, Y, Z, W, V, U, S])),
+    assertion(CountAfter =:= ExpectedCount).
+
+:- end_tests(insereObjectoEntrePosicoes).
+
 % Test for relva/1
 :- begin_tests(relva).
 test(relva_1) :-
