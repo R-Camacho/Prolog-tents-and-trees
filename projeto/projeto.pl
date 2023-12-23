@@ -276,12 +276,9 @@ aproveitaLinhas(Tabuleiro, _, _, _, N_Linha) :-
     length(Tabuleiro, N), % N - numero de linhas
     N_Linha is N + 1, !.
 
-
 aproveitaLinhas(Tabuleiro, Lista_Tendas_linhas, Tendas_Colocadas, N, N_Linha) :-
-    
     (%se o numero de posicoes livres na linha e igual ao numero de tendas a colocar
     nth1(N_Linha, Tendas_Colocadas, N_Tendas_Colocadas), %descobrir o numero de tendas existentes por linha
-    
     
     contaObjectosLinha(Tabuleiro, _, Livres), 
     nth1(N_Linha, Livres, N_Livres),  %descobrir o numero de posicoes livres por linha
@@ -292,128 +289,21 @@ aproveitaLinhas(Tabuleiro, Lista_Tendas_linhas, Tendas_Colocadas, N, N_Linha) :-
     Tendas_a_Faltar == N_Livres, %comparar com o numero de tendas por colocar 
 
     %se for linha "aproveitavel", coloca tendas nas celulas vazias
-    
     insereObjectoEntrePosicoes(Tabuleiro, t, (N_Linha, 1), (N_Linha, N)),
 
     %avanca para a prox iteracao
     Prox_linha is N_Linha + 1,
     aproveitaLinhas(Tabuleiro, Lista_Tendas_linhas, Tendas_Colocadas, N, Prox_linha), !
-
     ) 
     ; %caso contrario apenas avanca para a prox iteracao
     Prox_linha is N_Linha + 1,
     aproveitaLinhas(Tabuleiro, Lista_Tendas_linhas, Tendas_Colocadas, N, Prox_linha), !.
 
-
-
-/*limpaVizinhancas/1
-limpaVizinhancas(Puzzle) e verdade se Puzzle e um puzzle que, após a aplicação do
-predicado, tem relva em todas as posições a volta de uma tenda (vizinhanca alargada)
+/*limpaVizinhacas/1
+limpaVizinhancas(Puzzle) e verdade se Puzzle e um puzzle que, apos a aplicacao do
+predicado, tem relva em todas as posicoes a volta de uma tenda
 */
 
-% limpaVizinhancas(Puzzle):-
-%     Puzzle = (Tabuleiro, _, _),
-%     length(Tabuleiro, N),
-%     todasCelulas(Tabuleiro, Tendas, t),
-%     write(Tendas), nl,
-%     limpaVizinhancas(Tabuleiro, N, Tendas),
-%     write('aa').
-
-% limpaVizinhancas(_, []) :- !.
-
-% limpaVizinhancas(Tabuleiro, N, [Tenda|R]):-
-%     write(Tenda), nl,
-%     length(Tabuleiro, N),
-%     vizinhancaAlargada(Tenda, Viz),
-%     ocupaVizinhanca(Tenda, Viz, Tabuleiro, N),
-%     limpaVizinhancas(Tabuleiro, R), !.
-
-
-% %predicado auxiliar que nao falha quando select(Elem, Lista, R) e chamado e Elem nao esta na Lista 
-% select_true(Elem, Lista, R):-
-%     select(Elem, Lista, R), !.
-% select_true(_, Lista, Lista).
-
-% ocupaVizinhanca((L,C), Viz, Tabuleiro, Tam):-
-
-
-
-
-
-    % Viz = [(N,O), (N,C), (N,E), (L,O), (L,E), (S,O), (S,C), (S,E)],
-    % write(Viz), nl,
-    % write([(N,O), (N,C), (N,E), (L,O), (L,E), (S,O), (S,C), (S,E)]), 
-    % write(1), nl,
-    
-    % (
-    % %se estiver na primeira linha
-    % (write(a), nl, 
-    % L == 1, 
-    % write(primlin), nl,
-    % write(N),nl,
-    % %Remove os tres elementos superiores a tenda da lista da vizinhanca
-    % write(Viz),nl,
-    % select_true((N,O), Viz, Temp1Cima),
-    % select_true((N,C), Temp1Cima, Temp2Cima),
-    % select_true((N,E), Temp2Cima, Temp3Cima),
-    % write(Temp3Cima), nl,
-    % write(tempemcima), nl
-
-    % );
-    % (write(b), nl,%se estiver na primeira coluna 
-    % C == 1,
-    % write(primcol), nl,
-    
-    % %Remove os tres elementos a esquerda da tenda da lista da vizinhanca
-    % once(
-    % (select_true((N,O), Temp3Cima, Temp1Esquerda)) %se tambem esta na primeira linha
-    % ; 
-    % select_true((N,O), Viz, Temp1Esquerda) %caso contrario
-    % ),
-
-    % write(saiu), nl, 
-    % select_true((L,O), Temp1Esquerda, Temp2Esquerda),
-    % select_true((S,O), Temp2Esquerda, Temp3Esquerda),
-    % write(Temp3Esquerda), nl
-
-
-    % );
-    % (write(c), nl,%se estiver na ultima coluna
-    % C == Tam,
-    % write(ncol),
-    % %Remove os tres elementos a direita da tenda da lista da vizinhanca
-    % once(
-    % (select_true((N,E), Temp3Cima, Temp1Direita)) %se tambem esta na primeira linha
-    % ; 
-    % select_true((N,E), Viz, Temp1Direita) %caso contrario
-    % ),
-
-
-    % select_true((L,E), Temp1Direita, Temp2Direita),
-    % select_true((S,E), Temp2Direita, Temp3Direita),
-    % write(Temp3Direita)
-    % );
-    % (write(d), nl,%se estiver na ultima linha
-    % L == Tam,
-    
-    % %Remove os tres elementos a baixo da tenda da lista da vizinhanca
-    % select_true((S,O), Viz, Temp1),
-    % select_true((S,C), Temp1, Temp2),
-    % select_true((S,E), Temp2, Viz)
-    % )
-    % )
-    % ; write('dasdsadas'), nl,
-    
-    % %coloca relva nas celulas que restaram.
-    
-    % maplist(insereObjectoCelula(Tabuleiro, r), Viz),
-    % write(depois).
-    
-
-
-
-%
-%
 limpaVizinhancas(Puzzle):-
     Puzzle = (Tabuleiro, _, _),
     todasCelulas(Tabuleiro, Tendas, t),
@@ -426,14 +316,14 @@ limpaVizinhancas(Puzzle):-
 reuneVizinhancas(Tabuleiro, Tendas, Todas_adj):-
     reuneVizinhancas(Tabuleiro, Tendas, [], Todas_adj), !.
 
-reuneVizinhancas(_, [], X, X) :- !.
+reuneVizinhancas(_, [], Todas_adj, Todas_adj) :- !.
 
-reuneVizinhancas(Tabuleiro, [Tenda|R], Todas_adj, New_Todas_adj):-
+reuneVizinhancas(Tabuleiro, [Tenda|R], Adj, Todas_adj):-
     % ve tenda a tenda e faz uma lista de todas as posicoes na vizinhanca de tendas (sem repeticoes)
     vizinhancaAlargada(Tenda, Viz), 
-    append(Todas_adj, Viz, Adj_Temp),
+    append(Adj, Viz, Adj_Temp),
     sort(Adj_Temp, Adj_Sorted), %remove duplicados
-    reuneVizinhancas(Tabuleiro, R, Adj_Sorted, New_Todas_adj), !.
+    reuneVizinhancas(Tabuleiro, R, Adj_Sorted, Todas_adj), !.
 
 
 /*unicaHipotese/1
@@ -442,46 +332,28 @@ todas as arvores que tinham apenas uma posição livre na sua vizinhança que lh
 permitia ficar ligadas a uma tenda, tem agora uma tenda nessa posição.
 */
 
-%ver adjacentes de todas as arvores : se houver uma arvore que so tem uma adjacente, celula la
-
 unicaHipotese(Puzzle):-
     Puzzle = (Tabuleiro, _, _),
     todasCelulas(Tabuleiro, Arvores, a),
     todasCelulas(Tabuleiro, Todas),
-    write(Tabuleiro), nl, 
-    verificaArvores(Tabuleiro, Arvores, Todas, Unicas),
-    write(Unicas), nl, 
-    maplist(insereObjectoCelula(Tabuleiro, t), Unicas), !.
+    verificaArvores(Tabuleiro, Arvores, Todas, [], Final),
+    maplist(insereObjectoCelula(Tabuleiro, t), Final), !. 
 
+%caso terminal
+verificaArvores(_, [], _, Final, Final):- !. 
 
-verificaArvores(_, [], X, X):- !.
-
-verificaArvores(Tabuleiro, [(L,C)|R], Todas, Unicas):-
+verificaArvores(Tabuleiro, [(L,C)|R], Todas, Unicas, Final):-
     vizinhanca((L,C), Viz),
-    %write(Viz),
-    % "remove" os elementos que nao pertencem ao tabuleiro,
-    %write((L, C)) ,nl, nl,   
+    % "remove" os elementos que nao pertencem ao tabuleiro, 
     findall(X, (member(X, Viz), member(X, Todas)), Viz_valida),  
-    %write(Viz_valida), nl,
-    write(antes), nl,
-    write(entrou), nl,
-    findall(X, %apenas as celulas que estao mesmo vazias
-        (X = (LV, CV), write(X), member((LV, CV), Viz_valida), nth1(LV, Tabuleiro, Linha), nth1(CV, Linha, Cel), celulaVazia(Tabuleiro, (LV, CV)), Cel \= r ), 
+
+    findall((LV, CV), %apenas as celulas que estao mesmo vazias
+        (member((LV, CV), Viz_valida), nth1(LV, Tabuleiro, Linha),nth1(CV, Linha, Celula), (Celula == t; var(Celula))), 
     Unicas_temp),
-    write(depois), nl,
-    write(Unicas_temp),nl,
-    length(Unicas_temp, LL),
-    (LL > 0, 
-    nl, write(Unicas_temp), nl, nl
-    );
+
+    length(Unicas_temp, LL), 
+    (LL == 1, %se so existir uma hipotese
     append(Unicas, Unicas_temp, Nova),
-    verificaArvores(Tabuleiro, R, Todas, Nova), !
+    verificaArvores(Tabuleiro, R, Todas, Nova, Final)), !
     ;
-    write(aqui), nl,
-    verificaArvores(Tabuleiro, R, Todas,  Unicas), !.
-
- 
-
-
-
-
+    verificaArvores(Tabuleiro, R, Todas, Unicas, Final), !.
