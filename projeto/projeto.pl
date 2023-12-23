@@ -328,8 +328,8 @@ reuneVizinhancas(Tabuleiro, [Tenda|R], Adj, Todas_adj):-
 
 /*unicaHipotese/1
 unicaHipotese(Puzzle) e verdade se Puzzle e um puzzle que, apos a aplicacao do predicado,
-todas as arvores que tinham apenas uma posição livre na sua vizinhança que lhes
-permitia ficar ligadas a uma tenda, tem agora uma tenda nessa posição.
+todas as arvores que tinham apenas uma posicao livre na sua vizinhança que lhes
+permitia ficar ligadas a uma tenda, tem agora uma tenda nessa posicao.
 */
 
 unicaHipotese(Puzzle):-
