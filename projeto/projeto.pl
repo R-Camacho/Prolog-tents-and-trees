@@ -131,7 +131,7 @@ contaObjectosColuna(Tabuleiro, Objecto, ContagemColunas):-
 /*calculaObjectosTabuleiro/4
 calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) e verdade se Tabuleiro for um tabuleiro, 
 Objecto for o tipo de objecto que se procura, e ContagemLinhas e ContagemColunas forem, 
-respectivamente, listas com o número desses objectos por linha e por coluna.
+respectivamente, listas com o numero desses objectos por linha e por coluna.
 */
 
 calculaObjectosTabuleiro(Tabuleiro, ContagemLinhas, ContagemColunas, Objecto) :-
@@ -187,8 +187,8 @@ insereObjectoEntrePosicoesAux(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), Contado
     insereObjectoEntrePosicoesAux(Tabuleiro, TendaOuRelva, (L, C1), (L, C2), Prox_C), !.
 
 /*relva/1
-relva(Puzzle) é verdade se Puzzle e um puzzle que, após a aplicação do predicado, tem
-relva em todas as linhas/colunas cujo número de tendas já atingiu o número de tendas possível
+relva(Puzzle) e verdade se Puzzle e um puzzle que, apos a aplicacao do predicado, tem
+relva em todas as linhas/colunas cujo numero de tendas ja atingiu o numero de tendas possivel
 nessas linhas/colunas;
 */
 
@@ -228,10 +228,10 @@ relva(Tabuleiro, Tendas_Colocadas, Lista_tendas, N, N_Linha):-
 
 /*inacessiveis/1
 inacessiveis(Tabuleiro) e verdade se Tabuleiro e um tabuleiro que, apos a aplicacao do
-predicado, tem relva em todas as posições inacessiveis
+predicado, tem relva em todas as posicoes inacessiveis
 */
 
-%posicao inacessivel e uma celula que nao esta na vizinanca de nenhuma arvore
+%posicao inacessivel e uma celula que nao esta na vizinhanca de nenhuma arvore
 
 inacessiveis(Tabuleiro):-
     todasCelulas(Tabuleiro, Vazias, _),
@@ -328,7 +328,7 @@ reuneVizinhancas(Tabuleiro, [Tenda|R], Adj, Todas_adj):-
 
 /*unicaHipotese/1
 unicaHipotese(Puzzle) e verdade se Puzzle e um puzzle que, apos a aplicacao do predicado,
-todas as arvores que tinham apenas uma posicao livre na sua vizinhança que lhes
+todas as arvores que tinham apenas uma posicao livre na sua vizinhanca que lhes
 permitia ficar ligadas a uma tenda, tem agora uma tenda nessa posicao.
 */
 
