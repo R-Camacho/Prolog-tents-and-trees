@@ -357,3 +357,40 @@ verificaArvores(Tabuleiro, [(L,C)|R], Todas, Unicas, Final):-
     verificaArvores(Tabuleiro, R, Todas, Nova, Final)), !
     ;
     verificaArvores(Tabuleiro, R, Todas, Unicas, Final), !.
+
+
+/*valida/2
+valida(LArv, LTen) e verdade se LArv e LTen sao listas com todas as coordenadas em
+que existem, respectivamente, arvores e tendas, e e avaliado para verdade se for possivel
+estabelecer uma relacao em que existe uma e uma unica tenda para cada arvore nas suas
+vizinhancas
+*/
+
+valida(LArv, LTen) :-
+    %ver se cada arvore tem pelo menos uma tenda nas vizinhanca 
+    length(LArv, NArv), 
+    length(LTen, NTen), 
+    NArv == NTen, 
+    intersection(LArv, LTen, Inter),
+    Inter = [], %se houver posicoes em comum, falha
+    validaArvores(LArv, LTen), !.
+
+
+
+validaArvores([], _) :- !.
+
+validaArvores([Arv|R], LTen) :-
+    vizinhanca(Arv, Viz), 
+    findall(Celula, (member(Celula, Viz), member(Celula, LTen)), Tendas_Viz),
+    length(Tendas_Viz, N_Tendas),
+    N_Tendas > 0, %falha se nao existir nenhuma tenda na vizinhaca da arvore
+    (
+    %se so existir apenas uma tenda, associa esta a uma arvore
+        N_Tendas == 1,
+        nth1(1, Tendas_Viz, Unica_Tenda),
+        select(Unica_Tenda, LTen, Restantes), %remove a unica tenda da lista, que ja esta associada a uma arvore
+        validaArvores(R, Restantes)
+    ;
+    N_Tendas > 1, %se existir mais que uma tenda nesta arvore:
+    validaArvores(R, LTen)
+    ).
