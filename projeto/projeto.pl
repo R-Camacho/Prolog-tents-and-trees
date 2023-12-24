@@ -40,6 +40,7 @@ coordenadas do tabuleiro Tabuleiro;
 todasCelulas(Tabuleiro, TodasCelulas) :- 
     todasCelulasAux(Tabuleiro, TodasCelulas, 1), !.
 
+%caso terminal 
 todasCelulasAux(Tabuleiro, [], Prox_linha):-
     length(Tabuleiro, N), % N - numero de linhas
     Prox_linha is N + 1, !.
@@ -240,7 +241,6 @@ inacessiveis(Tabuleiro):-
 inacessiveis(_, []):- !.
 
 inacessiveis(Tabuleiro, [Celula | R]) :-
-
 
     (%se a celula for inacessivel:
     vizinhanca(Celula, Vizinhanca),
