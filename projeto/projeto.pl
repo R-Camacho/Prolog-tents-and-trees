@@ -401,7 +401,7 @@ resolvido.
 */
 
 resolve(Puzzle) :-
-    Puzzle = (Tabuleiro, Lista_tendas_linhas, Lista_tendas_colunas),
+    Puzzle = (Tabuleiro, _, _),
     %Resolver o maximo possivel antes da tentativa e erro
     inacessiveis(Tabuleiro), 
     relva(Puzzle), 
