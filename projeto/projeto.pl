@@ -67,7 +67,7 @@ todasCelulas(Tabuleiro, TodasCelulas, Objecto) :-
         todasCelulasVazias(Tabuleiro, TodasCelulas, 1), !
         ;
         todasCelulasAux(Tabuleiro, TodasCelulas, Objecto, 1), !
-    ).
+    ), !.
 
 %semelhante ao predicado anterior, com approach iterativo usando findall/3 
 
@@ -213,7 +213,7 @@ relva(Tabuleiro, Tendas_Colocadas, Lista_tendas, N, N_Linha):-
     nth1(N_Linha, Tendas_Colocadas, Tendas_nesta_linha), %descobrir o numero de tendas existentes por linha
 
     nth1(N_Linha, Lista_tendas, N_Tendas_a_colocar), %comparar com o numero de tendas necessario por linha
-    Tendas_nesta_linha == N_Tendas_a_colocar,
+    Tendas_nesta_linha =:= N_Tendas_a_colocar,
 
     %se estiver completa, coloca relva nas celulas vazias
     insereObjectoEntrePosicoes(Tabuleiro, r, (N_Linha, 1), (N_Linha, N)),
@@ -286,7 +286,7 @@ aproveitaLinhas(Tabuleiro, Lista_Tendas_linhas, Tendas_Colocadas, N, N_Linha) :-
     nth1(N_Linha, Lista_Tendas_linhas, N_Tendas_a_colocar), 
     
     Tendas_a_Faltar is N_Tendas_a_colocar - N_Tendas_Colocadas,
-    Tendas_a_Faltar == N_Livres, %comparar com o numero de tendas por colocar 
+    Tendas_a_Faltar =:= N_Livres, %comparar com o numero de tendas por colocar 
 
     %se for linha "aproveitavel", coloca tendas nas celulas vazias
     insereObjectoEntrePosicoes(Tabuleiro, t, (N_Linha, 1), (N_Linha, N)),
@@ -352,7 +352,7 @@ verificaArvores(Tabuleiro, [(L,C)|R], Todas, Unicas, Final):-
     Unicas_temp),
 
     length(Unicas_temp, LL), 
-    (LL == 1, %se so existir uma hipotese
+    (LL =:= 1, %se so existir uma hipotese
     append(Unicas, Unicas_temp, Nova),
     verificaArvores(Tabuleiro, R, Todas, Nova, Final)), !
     ;
@@ -370,30 +370,28 @@ valida(LArv, LTen) :-
     %ver se cada arvore tem pelo menos uma tenda nas vizinhanca 
     length(LArv, NArv), 
     length(LTen, NTen), 
-    NArv == NTen, 
+    NArv =:= NTen, 
     intersection(LArv, LTen, Inter),
-    Inter = [], %se houver posicoes em comum, falha
+    Inter == [], %se houver posicoes em comum, falha
     validaArvores(LArv, LTen), !.
 
 validaArvores([], _) :- !.
 
 validaArvores([Arv|R], LTen) :-
-
-
     vizinhanca(Arv, Viz), 
     findall(Celula, (member(Celula, Viz), member(Celula, LTen)), Tendas_Viz),
     length(Tendas_Viz, N_Tendas),
     N_Tendas > 0, %falha se nao existir nenhuma tenda na vizinhaca da arvore
     (
     %se so existir apenas uma tenda, associa esta a uma arvore
-    N_Tendas == 1,
+    N_Tendas =:= 1,
     nth1(1, Tendas_Viz, Unica_Tenda),
     select(Unica_Tenda, LTen, Restantes), %remove a unica tenda da lista, que ja esta associada a uma arvore
-    validaArvores(R, Restantes)
+    validaArvores(R, Restantes), !
     ;
     N_Tendas > 1, %se existir mais que uma tenda nesta arvore:
-    validaArvores(R, LTen)
-    ).
+    validaArvores(R, LTen), !
+    ), !.
 
 /*resolve/1
 resolve(Puzzle) e verdade se Puzzle e um puzzle que, apos a aplicacao do predicado, fica
@@ -407,9 +405,11 @@ resolve(Puzzle) :-
     relva(Puzzle), 
     aproveita(Puzzle), 
     limpaVizinhancas(Puzzle), 
-    unicaHipotese(Puzzle), 
+    unicaHipotese(Puzzle),
+    limpaVizinhancas(Puzzle),
     relva(Puzzle), 
     aproveita(Puzzle),
+    limpaVizinhancas(Puzzle),
     %Tentativa e erro
     (
     resolvido(Puzzle), !
@@ -418,11 +418,11 @@ resolve(Puzzle) :-
     colocaTenda(Puzzle, Tentativa),
         (
         %Tenta resolver o puzzle com a tenda colocada
-        resolve(Tentativa)
+        resolve(Tentativa), !
         ;
         % chama o resolve outra vez, mas a tenda a ser colocada por colocaTenda e diferente
-        resolve(Puzzle)
-        )
+        resolve(Puzzle), !
+        ), !
     ), !.
 
 
@@ -437,13 +437,14 @@ colocaTenda(Puzzle, Tentativa):-
 %predicado auxiliar que retorna as listas das coordenadas das arvores e tendas
 coordsArvTen(Tabuleiro, LArv, LTen) :-
     todasCelulas(Tabuleiro, LArv, a),
-    todasCelulas(Tabuleiro, LTen, t).
+    todasCelulas(Tabuleiro, LTen, t), !.
 
 %predicado auxiliar que verifica se um puzzle esta resolvido
 resolvido(Puzzle) :-
     Puzzle = (Tabuleiro, Lin, Col),
+    coordsArvTen(Tabuleiro, LArv, LTen),
+    valida(LArv, LTen), 
     contaObjectosLinha(Tabuleiro, t, Tendas_Linhas),
     contaObjectosColuna(Tabuleiro, t, Tendas_Colunas),
-    Lin == Tendas_Linhas, Col == Tendas_Colunas,
-    coordsArvTen(Tabuleiro, LArv, LTen),
-    valida(LArv, LTen), !.
+    Lin == Tendas_Linhas, Col == Tendas_Colunas, !.
+    
