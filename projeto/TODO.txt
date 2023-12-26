@@ -18,3 +18,5 @@ Ideia limpaVizinhancas: pegar em todos os adjacentes de todas as tendas e meter 
 
 
 Ideia final fazer https://g2384.github.io/tents-and-trees-puzzle-solver/  ate o numero de celulas vazias for 0
+
+Tirar If-else

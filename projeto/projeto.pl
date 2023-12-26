@@ -375,22 +375,75 @@ valida(LArv, LTen) :-
     Inter = [], %se houver posicoes em comum, falha
     validaArvores(LArv, LTen), !.
 
-
-
 validaArvores([], _) :- !.
 
 validaArvores([Arv|R], LTen) :-
+
+
     vizinhanca(Arv, Viz), 
     findall(Celula, (member(Celula, Viz), member(Celula, LTen)), Tendas_Viz),
     length(Tendas_Viz, N_Tendas),
     N_Tendas > 0, %falha se nao existir nenhuma tenda na vizinhaca da arvore
     (
     %se so existir apenas uma tenda, associa esta a uma arvore
-        N_Tendas == 1,
-        nth1(1, Tendas_Viz, Unica_Tenda),
-        select(Unica_Tenda, LTen, Restantes), %remove a unica tenda da lista, que ja esta associada a uma arvore
-        validaArvores(R, Restantes)
+    N_Tendas == 1,
+    nth1(1, Tendas_Viz, Unica_Tenda),
+    select(Unica_Tenda, LTen, Restantes), %remove a unica tenda da lista, que ja esta associada a uma arvore
+    validaArvores(R, Restantes)
     ;
     N_Tendas > 1, %se existir mais que uma tenda nesta arvore:
     validaArvores(R, LTen)
     ).
+
+/*resolve/1
+resolve(Puzzle) e verdade se Puzzle e um puzzle que, apos a aplicação do predicado, fica
+resolvido.
+*/
+
+resolve(Puzzle) :-
+    Puzzle = (Tabuleiro, Lista_tendas_linhas, Lista_tendas_colunas),
+    %Resolver o maximo possivel antes da tentativa e erro
+    inacessiveis(Tabuleiro), 
+    relva(Puzzle), 
+    aproveita(Puzzle), 
+    limpaVizinhancas(Puzzle), 
+    unicaHipotese(Puzzle), 
+    relva(Puzzle), 
+    aproveita(Puzzle),
+    %Tentativa e erro
+    (
+    resolvido(Puzzle), !
+    ;
+    % If the puzzle is not solved, try to place a tent and solve the puzzle
+    colocaTenda(Puzzle, Tentativa),
+        (
+        %Tenta resolver o puzzle com a tenda colocada
+        resolve(Tentativa)
+        ;
+        % chama o resolve outra vez, mas a tenda a ser colocada por colocaTenda e diferente
+        resolve(Puzzle)
+        )
+    ), !.
+
+
+%predicado auxiliar que coloca tenda na primeira posicao vazia
+colocaTenda(Puzzle, Tentativa):-
+    Puzzle = (Tabuleiro, Lin, Col),
+    todasCelulas(Tabuleiro, Vazias, _),
+    member(Vazia, Vazias),  %tenta com todos os membros de Vazias ate o puzzle ser resolvivel
+    insereObjectoCelula(Tabuleiro, t, Vazia),
+    Tentativa = (Tabuleiro, Lin, Col).
+
+%predicado auxiliar que retorna as listas das coordenadas das arvores e tendas
+coordsArvTen(Tabuleiro, LArv, LTen) :-
+    todasCelulas(Tabuleiro, LArv, a),
+    todasCelulas(Tabuleiro, LTen, t).
+
+%predicado auxiliar que verifica se um puzzle esta resolvido
+resolvido(Puzzle) :-
+    Puzzle = (Tabuleiro, Lin, Col),
+    contaObjectosLinha(Tabuleiro, t, Tendas_Linhas),
+    contaObjectosColuna(Tabuleiro, t, Tendas_Colunas),
+    Lin == Tendas_Linhas, Col == Tendas_Colunas,
+    coordsArvTen(Tabuleiro, LArv, LTen),
+    valida(LArv, LTen), !.
