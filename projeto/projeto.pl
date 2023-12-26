@@ -396,7 +396,7 @@ validaArvores([Arv|R], LTen) :-
     ).
 
 /*resolve/1
-resolve(Puzzle) e verdade se Puzzle e um puzzle que, apos a aplicação do predicado, fica
+resolve(Puzzle) e verdade se Puzzle e um puzzle que, apos a aplicacao do predicado, fica
 resolvido.
 */
 
