@@ -154,13 +154,12 @@ celulaVazia(Tabuleiro, (L, C)) :-
     nth1(C, Linha, Celula),% Aceder a linha L e depois coluna C
     (var(Celula), !; Celula == r)), !.
     %ve se Celula e relva (r) ou esta vazia (neste caso uma variavel)
-    
-    
+
+
 /*insereObjectoCelula/3
 insereObjectoCelula(Tabuleiro, TendaOuRelva, (L, C)) e verdade se Tabuleiro e um
 tabuleiro e (L, C) sao as coordenadas onde queremos inserir o objecto TendaOuRelva
 */
-
 
 insereObjectoCelula(Tabuleiro, TendaOuRelva, (L, C)):-
     nth1(L, Tabuleiro, Linha),
