@@ -398,7 +398,8 @@ resolvido.
 */
 
 resolve(Puzzle) :-
-    Puzzle = (Tabuleiro, _, _),
+    resolvido(Puzzle);
+    (Puzzle = (Tabuleiro, _, _),
     %Resolver o maximo possivel antes da tentativa e erro
     inacessiveis(Tabuleiro), 
     relva(Puzzle), 
@@ -422,7 +423,7 @@ resolve(Puzzle) :-
         % chama o resolve outra vez, mas a tenda a ser colocada por colocaTenda e diferente
         resolve(Puzzle), !
         ), !
-    ), !.
+    ), !).
 
 
 %predicado auxiliar que coloca tenda na primeira posicao vazia
