@@ -170,8 +170,8 @@ insereObjectoCelula(Tabuleiro, TendaOuRelva, (L, C)):-
 
 
 /*insereObjectoEntrePosicoes/4
-insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2)) e ver-
-dade se Tabuleiro e um tabuleiro, e (L, C1) e (L, C2) sao as coordenadas, na Linha L,
+insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2)) e verdade
+se Tabuleiro e um tabuleiro, e (L, C1) e (L, C2) sao as coordenadas, na Linha L,
 entre as quais (incluindo) se insere o objecto TendaOuRelva.
 */
 insereObjectoEntrePosicoes(Tabuleiro, TendaOuRelva, (L, C1), (L, C2)):-
@@ -298,7 +298,7 @@ aproveitaLinhas(Tabuleiro, Lista_Tendas_linhas, Tendas_Colocadas, N, N_Linha) :-
     Prox_linha is N_Linha + 1,
     aproveitaLinhas(Tabuleiro, Lista_Tendas_linhas, Tendas_Colocadas, N, Prox_linha), !.
 
-/*limpaVizinhacas/1
+/*limpaVizinhancas/1
 limpaVizinhancas(Puzzle) e verdade se Puzzle e um puzzle que, apos a aplicacao do
 predicado, tem relva em todas as posicoes a volta de uma tenda
 */
@@ -380,7 +380,7 @@ validaArvores([Arv|R], LTen) :-
     vizinhanca(Arv, Viz), 
     findall(Celula, (member(Celula, Viz), member(Celula, LTen)), Tendas_Viz),
     length(Tendas_Viz, N_Tendas),
-    N_Tendas > 0, %falha se nao existir nenhuma tenda na vizinhaca da arvore
+    N_Tendas > 0, %falha se nao existir nenhuma tenda na vizinhanca da arvore
     (
     %se so existir apenas uma tenda, associa esta a uma arvore
     N_Tendas =:= 1,
