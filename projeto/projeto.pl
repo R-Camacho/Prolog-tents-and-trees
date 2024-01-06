@@ -414,7 +414,7 @@ resolve(Puzzle) :-
     (
     resolvido(Puzzle), !
     ;
-    % If the puzzle is not solved, try to place a tent and solve the puzzle
+    % se nao estiver resolvido, coloca uma tenda na primeira celula disponivel
     colocaTenda(Puzzle, Tentativa),
         (
         %Tenta resolver o puzzle com a tenda colocada
@@ -423,7 +423,7 @@ resolve(Puzzle) :-
         % chama o resolve outra vez, mas a tenda a ser colocada por colocaTenda e diferente
         resolve(Puzzle), !
         ), !
-    ), !).
+    ), !), !.
 
 
 %predicado auxiliar que coloca tenda na primeira posicao vazia
